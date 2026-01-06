@@ -2,11 +2,11 @@
 <html lang="th">
 <head>
   <meta charset="UTF-8">
-  <title>Ai heal jai</title>
+  <title>Ai heal jai ^^</title>
   <style>
     body {
       font-family: 'Prompt', sans-serif;
-      background: linear-gradient(135deg, #89f7fe, #66a6ff);
+      background: linear-gradient(135deg, #fafe89, #ffee00);
       height: 100vh;
       display: flex;
       justify-content: center;
@@ -14,10 +14,6 @@
       flex-direction: column;
       color: #333;
       text-align: center;
-    }
-    h1 {
-      margin-bottom: 20px;
-      font-size: 2em;
     }
     #quote {
       font-size: 1.5em;
@@ -29,58 +25,84 @@
       box-shadow: 0 4px 10px rgba(0,0,0,0.2);
     }
     button {
-      background: #007bff;
+      background: #49e87e;
       color: white;
       border: none;
       padding: 10px 20px;
       border-radius: 10px;
-      font-size: 1em;
       cursor: pointer;
-      transition: 0.3s;
       margin: 5px;
     }
-    button:hover {
-      background: #0056b3;
+    .speech-bubble {
+    position: absolute;
+    background: rgba(255, 255, 255, 0.3); /* สีอ่อน ๆ */
+    color: #333;
+    padding: 8px 14px;
+    border-radius: 20px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+    font-size: 1em;
+    white-space: nowrap;
+    pointer-events: none;
+    transition: transform 5s linear;
     }
   </style>
 </head>
+
 <body>
-  <h1>Ai heal jai 🎤</h1>
-  <div id="quote">กดปุ่มเพื่อสุ่มคำคม!</div>
+  <h1>Ai heal jai ^^</h1>
+  <div id="quote">กำลังโหลดคำคม...</div>
   <div>
     <button onclick="newQuote()">สุ่มคำคม</button>
     <button onclick="speakQuote()">พูดคำคม</button>
   </div>
 
   <script>
-    const quotes = [
-      "ข้าวที่เธอกิน มันจะอร่อยเท่าเราหรอ",
-      "เธอก็เหมือนผักตบชวา เป็นพืชขยะ ไม่มีค่าแถมรกโลก",
-      "จะดูถูกก็ไม่ว่า แต่ดูน้ำหน้าตัวเองด้วย",
-      "ว้าย ไม่มีแฟน",
-      "ขอใจเธอได้ไหม ถือว่าเป็นของขวัญปีใหม่ละกัน",
-      "เมื่อวานอาจจะโหดร้าย แต่ไม่เป็นไร ทุกเช้ามันเริ่มใหม่เสมอ",
-      "อินฝ่ายเดียว เขาเรียกท่านผู้ชม",
-      "คิดว่าผมมีแต่รังแค แต่ที่แท้ก็มีคุณ",
-      "ม่มีสถานะ ไม่มีการพบเจอ มีแต่คิดถึงเธอ กับความทรงจำ",
-      "สะกดติดหมด ไม่สดอย่าเสี่ยง",
-      "เวรกรรมของเธอ ที่ได้เจอคนน่ารักแบบเรา"
-    ];
+    let quotes = [];
+    let currentQuote = "";
 
-    let currentQuote = quotes[0];
+    const QUOTE_URL = "https://raw.githubusercontent.com/frombomu/QuoteVibe/main/quotes.json";
+
+    fetch(QUOTE_URL)
+      .then(response => response.json())
+      .then(data => {
+        quotes = data;
+        newQuote();
+      })
+      .catch(error => {
+        document.getElementById("quote").textContent = "โหลดคำคมไม่สำเร็จ";
+        console.error(error);
+      });
 
     function newQuote() {
+      if (quotes.length === 0) return;
       const randomIndex = Math.floor(Math.random() * quotes.length);
       currentQuote = quotes[randomIndex];
       document.getElementById("quote").textContent = currentQuote;
     }
 
     function speakQuote() {
+      if (!currentQuote) return;
       const utterance = new SpeechSynthesisUtterance(currentQuote);
-      utterance.lang = "th-TH";   
-      utterance.rate = 0.7;       
-      utterance.pitch = 1.0;      // ระดับเสียง
+      utterance.lang = "th-TH";
+      utterance.rate = 0.6;
       speechSynthesis.speak(utterance);
+
+      const bubble = document.createElement("div");
+      bubble.className = "speech-bubble";
+      bubble.textContent = currentQuote;
+
+      const maxX = window.innerWidth - 150;
+      const maxY = window.innerHeight - 50;
+      bubble.style.left = Math.random() * maxX + "px";
+      bubble.style.top = Math.random() * maxY + "px";
+
+      document.body.appendChild(bubble);
+
+      let offset = 0;
+      setInterval(() => {
+        offset -= 0.2;
+        bubble.style.transform = `translateY(${offset}px)`;
+      }, 50);
     }
   </script>
 </body>
